@@ -1,7 +1,11 @@
 import React, {useReducer} from 'react'
+import axios from 'axios'
 import {GithubContext} from './githubContext'
 import {githubReducer} from './githubReducer'
 import {SEARCH_USERS, GET_REPOS, GET_USER, SET_LOADING, CLEAR_USERS} from '../types'
+
+const CLIENT_ID = process.env.REACT_APP_CLIENT_ID
+const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET
 
 export const GithubState = ({children}) => {
   const initialState = {
@@ -12,14 +16,20 @@ export const GithubState = ({children}) => {
   }
 
   const [state, dispatch] = useReducer(githubReducer, initialState)
+  
   const search = async value => {
     setLoading()
 
+    const responce = await axios.get(
+      `https://api.github.com/search/users?q=${value}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`
+    )
+
     dispatch({
       type: SEARCH_USERS,
-      payload: []
+      payload: responce.data.items
     })
   }
+  
   const getUser = async name => {
     setLoading()
 
@@ -28,6 +38,7 @@ export const GithubState = ({children}) => {
       payload: {}
     })
   }
+  
   const getRepos = async name => {
     setLoading()
 
@@ -36,7 +47,9 @@ export const GithubState = ({children}) => {
       payload: []
     })
   }
+  
   const clearUser = () => dispatch({type: CLEAR_USERS})
+  
   const setLoading = () => dispatch({type: SET_LOADING})
 
   const {user, users, repos, loading} = state
