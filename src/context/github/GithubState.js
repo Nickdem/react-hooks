@@ -50,7 +50,7 @@ export const GithubState = ({children}) => {
     setLoading()
 
     const responce = await axios.get(
-      withCreds(`https://api.github.com/users/${name}/repos?per_page=10&`)
+      withCreds(`https://api.github.com/users/${name}/repos?per_page=5&`)
     )
 
     dispatch({
